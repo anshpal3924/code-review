@@ -13,12 +13,12 @@ class GeminiLLM(LLMInterface):
         if not self.api_key:
             raise Exception("GEMINI_API_KEY not found in environment variables")
         
-        # Try multiple model variations with v1 API (more stable than v1beta)
+        # Try multiple model variations with v1beta API (February 2026 models)
         model_attempts = [
-            ("gemini-pro", "v1"),
-            ("gemini-1.5-flash", "v1"),
-            ("gemini-1.5-pro", "v1"),
-            ("gemini-pro", "v1beta"),
+            ("gemini-2.5-flash", "v1beta"),
+            ("gemini-2.0-flash", "v1beta"),
+            ("gemini-pro-latest", "v1beta"),
+            ("gemini-flash-latest", "v1beta"),
         ]
         
         self.model_name = None
