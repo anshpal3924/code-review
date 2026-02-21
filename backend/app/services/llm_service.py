@@ -21,6 +21,10 @@ class GeminiLLM(LLMInterface):
             ("gemini-pro", "v1beta"),
         ]
         
+        self.model_name = None
+        self.api_url = None
+        self.initialization_error = None
+        
         for model_name, api_version in model_attempts:
             try:
                 print(f"🔄 Testing {model_name} with {api_version} API")
@@ -30,12 +34,16 @@ class GeminiLLM(LLMInterface):
                 test_response = self._make_request("Hi")
                 if test_response:
                     print(f"✅ Successfully initialized: {model_name} ({api_version})")
+                    self.initialization_error = None
                     return
             except Exception as e:
                 print(f"❌ Failed {model_name} ({api_version}): {str(e)[:150]}")
+                self.initialization_error = str(e)
                 continue
         
-        raise Exception("No working Gemini model found. Check API key at https://aistudio.google.com/app/apikey")
+        # Don't raise exception - allow app to start
+        print("⚠️  WARNING: Gemini API unavailable. Q&A will return error message.")
+        print("    Check API key at https://aistudio.google.com/app/apikey")
     
     def _make_request(self, prompt: str) -> str:
         """Make a direct HTTP request to Gemini API"""
@@ -71,6 +79,9 @@ class GeminiLLM(LLMInterface):
         raise Exception(f"Unexpected API response format: {result}")
 
     def generate(self, prompt: str) -> str:
+        if self.initialization_error:
+            return f"⚠️ Gemini API is currently unavailable. Error: {self.initialization_error[:200]}\n\nPlease check your API key at https://aistudio.google.com/app/apikey"
+        
         try:
             return self._make_request(prompt)
         except Exception as e:
