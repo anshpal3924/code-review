@@ -1,13 +1,10 @@
 # Embedding generation service
 import os
 from dotenv import load_dotenv
-import google.generativeai as genai
 import numpy as np
 import hashlib
 
 load_dotenv()
-
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 class EmbeddingService:
 
